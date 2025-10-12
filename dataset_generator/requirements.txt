@@ -1,0 +1,5 @@
+# requirements.txt
+# Python version: >=3.12
+# Dependencies for the project
+pandas >=1.0.0
+country_converter >=0.7.0
