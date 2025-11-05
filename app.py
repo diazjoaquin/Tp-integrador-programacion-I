@@ -29,16 +29,18 @@ def buscar_pais():
       print(f"{i}. Nombre: {nombre}, Población: {poblacion}, Superficie(Km2): {superficie}, Continente: {continente}")
   else:
     print("No se encontraron países que coincidan con la búsqueda")
-buscar_pais()
 
 def filtrar_x_continente():
   continente = input("Por favor ingrese el nombre del continente: ")
   continentes = ["America", "Asia", "Africa", "Europa", "Oceania", "Antartida"]
   termino_busqueda = normalizar_palabra(continente.strip().lower())
-  if termino_busqueda not in [c.lower() for c in continentes]:
-    print("El continente ingresado no existe.")
-    print("Los continentes disponibles son: America, Asia, Africa, Europa, Oceania, Antartida")
-    return
+  while True:
+    if termino_busqueda in [c.lower() for c in continentes]:
+      break
+    else:
+      print("El continente ingresado no existe. Por favor ingrese un continente válido.")
+      continente = input("Por favor ingrese el nombre del continente: ")
+      termino_busqueda = normalizar_palabra(continente.strip().lower())
 
   filtrados_x_continente = []
 
@@ -58,11 +60,41 @@ def filtrar_x_continente():
   else:
     print("No se encontraron paises que coincidan con la búsqueda")
 
-filtrar_x_continente()  
+def filtrar_x_rango(param: str):
+  rango = input(f"Por favor ingrese el rango de {param} [min-max]: ")
+  [min, max] = rango.split("-")
+  while True:
+    if min.isdigit() and max.isdigit():
+      min = int(min)
+      max = int(max)
+      if min > max:
+        print("El valor mínimo no puede ser mayor que el valor máximo. Por favor ingrese un rango válido.")
+        rango = input(f"Por favor ingrese el rango de {param} [min-max]: ")
+        [min, max] = rango.split("-")
+      else:
+        break
+    else:
+      print("El rango ingresado no es válido. Por favor ingrese un rango numérico.")
+      rango = input(f"Por favor ingrese el rango de {param} [min-max]: ")
+      [min, max] = rango.split("-")
+  
+  filtrados_x_rango = []
 
-def filtrar_x_rango_poblacion():
-  pass
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      if param == "poblacion":
+        if min <= int(linea[1]) <= max:
+          filtrados_x_rango.append(linea)
+      elif param == "superficie":
+        if min <= int(linea[2]) <= max:
+          filtrados_x_rango.append(linea)
 
-def filtrar_x_rango_superficie():
-  pass
-
+  if filtrados_x_rango:
+    print(f"Paises con {param} en el rango [{min}-{max}]")
+    for i, pais in enumerate(filtrados_x_rango, 1):
+      [nombre, poblacion, superficie, continente] = pais
+      print(f"{i}. Nombre: {nombre}, Población: {poblacion}, Superficie(Km2): {superficie}, Continente: {continente}")
+  else:
+    print("No se encontraron paises que coincidan con la búsqueda")
