@@ -122,4 +122,34 @@ def ordenar(param: str, paises: list[dict], descendente: bool):
     for i, pais in enumerate(paises, 1):
       print(f"{i}. Nombre: {pais['nombre']}, Población: {pais['poblacion']}, Superficie(Km2): {pais['superficie']}, Continente: {pais['continente']}")
 
-    
+def estadisticas(paises: list[dict]):
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      [nombre, poblacion, superficie, continente] = linea
+      paises.append({"nombre": nombre, "poblacion": int(poblacion), "superficie": int(superficie), "continente": continente})
+
+  pais_mayor_poblacion = max(paises, key=itemgetter("poblacion"))
+  print(f"El pais con mayor población es {pais_mayor_poblacion['nombre']} con {pais_mayor_poblacion['poblacion']} habitantes.")
+
+  pais_menor_poblacion = min(paises, key=itemgetter("poblacion"))
+  print(f"El pais con menor población es {pais_menor_poblacion['nombre']} con {pais_menor_poblacion['poblacion']} habitantes.")
+
+  promedio_poblacion = sum(pais["poblacion"] for pais in paises) / len(paises)
+  print(f"El promedio de población por país es de {promedio_poblacion:.2f} habitantes.")
+
+  promedio_superficie = sum(pais["superficie"] for pais in paises) / len(paises)
+  print(f"El promedio de superficie por país es de {promedio_superficie:.2f} Km2.")
+
+  paises_x_continente = {}
+  for pais in paises:
+    continente = pais["continente"]
+    if continente not in paises_x_continente:
+      paises_x_continente[continente] = []
+    paises_x_continente[continente].append(pais)
+  
+  for continente, paises_continente in paises_x_continente.items():
+    print(f"{continente.capitalize()} tiene un total de {len(paises_continente)} paises.")
+
+estadisticas([])
