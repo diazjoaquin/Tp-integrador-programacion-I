@@ -1,7 +1,6 @@
 import csv
 import unicodedata
-
-paises: list[dict] = []
+from operator import itemgetter
 
 def normalizar_palabra(palabra):
   return ''.join(c for c in unicodedata.normalize('NFD', palabra)
@@ -98,3 +97,29 @@ def filtrar_x_rango(param: str):
       print(f"{i}. Nombre: {nombre}, Población: {poblacion}, Superficie(Km2): {superficie}, Continente: {continente}")
   else:
     print("No se encontraron paises que coincidan con la búsqueda")
+
+def ordenar(param: str, paises: list[dict], descendente: bool):
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      [nombre, poblacion, superficie, continente] = linea
+      paises.append({"nombre": nombre, "poblacion": int(poblacion), "superficie": int(superficie), "continente": continente})
+
+  if param == "nombre":
+    paises.sort(key=itemgetter("nombre"), reverse=descendente)
+    print(f"Ordenados por nombre {'de forma descendente' if descendente else 'de forma ascendente'}:")
+    for i, pais in enumerate(paises, 1):
+      print(f"{i}. Nombre: {pais['nombre']}, Población: {pais['poblacion']}, Superficie(Km2): {pais['superficie']}, Continente: {pais['continente']}")
+  elif param == "poblacion":
+    paises.sort(key=itemgetter("poblacion"), reverse=descendente)
+    print(f"Ordenados por población {'de forma descendente' if descendente else 'de forma ascendente'}:")
+    for i, pais in enumerate(paises, 1):
+      print(f"{i}. Nombre: {pais['nombre']}, Población: {pais['poblacion']}, Superficie(Km2): {pais['superficie']}, Continente: {pais['continente']}")
+  elif param == "superficie":
+    paises.sort(key=itemgetter("superficie"), reverse=descendente)
+    print(f"Ordenados por superficie {'de forma descendente' if descendente else 'de forma ascendente'}:")
+    for i, pais in enumerate(paises, 1):
+      print(f"{i}. Nombre: {pais['nombre']}, Población: {pais['poblacion']}, Superficie(Km2): {pais['superficie']}, Continente: {pais['continente']}")
+
+    
