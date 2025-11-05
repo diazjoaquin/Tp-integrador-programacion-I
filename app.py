@@ -61,6 +61,12 @@ def filtrar_x_continente():
 
 def filtrar_x_rango(param: str):
   rango = input(f"Por favor ingrese el rango de {param} [min-max]: ")
+  while True:
+    if "-" not in rango:
+      print("El rango ingresado no es válido. Por favor ingrese un rango numérico.")
+      rango = input(f"Por favor ingrese el rango de {param} [min-max]: ")
+    else:
+      break
   [min, max] = rango.split("-")
   while True:
     if min.isdigit() and max.isdigit():
@@ -152,4 +158,60 @@ def estadisticas(paises: list[dict]):
   for continente, paises_continente in paises_x_continente.items():
     print(f"{continente.capitalize()} tiene un total de {len(paises_continente)} paises.")
 
-estadisticas([])
+while True:
+  print("\nTrabajo integrador de Programación I - Gestión de datos en Python.\n")
+  print("Por favor ingrese una opción para continuar: ")
+  opcion = input("1. Buscar un país por nombre. \n2. Filtrar países por continente. \n3. Filtrar países por rango de población. \n4. Filtrar países por rango de superficie(Km2). \n5. Ordenar países por nombre. \n6. Ordenar países por población. \n7. Ordenar países por superficie. \n8. Estadísticas. \n9. Salir del menú.\n")
+
+  match opcion:
+    case "1":
+      buscar_pais()
+    case "2":
+      filtrar_x_continente()
+    case "3":
+      filtrar_x_rango("poblacion")
+    case "4":
+      filtrar_x_rango("superficie")
+    case "5":
+      orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+      while True:
+        if orden == "desc":
+          ordenar("nombre", [], True)
+          break
+        elif orden == "asc":
+          ordenar("nombre", [], False)
+          break
+        else:
+          print("Opción inválida. Por favor ingrese 'asc' o 'desc'.")
+          orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+    case "6":
+      orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+      while True:
+        if orden == "desc":
+          ordenar("poblacion", [], True)
+          break
+        elif orden == "asc":
+          ordenar("poblacion", [], False)
+          break
+        else:
+          print("Opción inválida. Por favor ingrese 'asc' o 'desc'.")
+          orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+    case "7":
+      orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+      while True:
+        if orden == "desc":
+          ordenar("superficie", [], True)
+          break
+        elif orden == "asc":
+          ordenar("superficie", [], False)
+          break
+        else:
+          print("Opción inválida. Por favor ingrese 'asc' o 'desc'.")
+          orden = input("¿Desea ordenar de forma ascendente o descendente? (asc/desc): ")
+    case "8":
+      estadisticas([])
+    case "9":
+      print("Saliendo del menú...")
+      break
+    case _:
+      print("\nOpción inválida. Por favor ingrese una opción válida.")
