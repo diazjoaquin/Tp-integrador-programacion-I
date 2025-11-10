@@ -222,10 +222,71 @@ def agregar_pais():
   print(f"El país {nombre} ha sido agregado a la lista.")
   return
 
+def actualizar_poblacion_y_superficie(paises: list[dict]):
+  pais = input("Ingresar el nombre del país que desea actualizar: ")
+  while True:
+    if pais.isspace() or pais == "":
+      print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
+      pais = input("Ingresar el nombre del país que desea buscar: ")
+    else:
+      break
+
+  termino_busqueda = normalizar_palabra(pais.strip().lower())
+  pais_encontrado = False
+
+  #verificamos que el pais exista
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      [nombre, poblacion, superficie, continente] = linea
+      if normalizar_palabra(nombre.strip().lower()) == termino_busqueda:
+        pais_encontrado = True
+        break
+
+  if pais_encontrado == False:
+    print("No se encontraron países que coincidan con la búsqueda")
+    return
+  
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      [nombre, poblacion, superficie, continente] = linea
+      if termino_busqueda not in normalizar_palabra(nombre.strip().lower()):
+        paises.append({"nombre": nombre, "poblacion": poblacion, "superficie": superficie, "continente": continente})
+      else:
+        nueva_poblacion = input("Por favor ingrese la nueva población del país: ")
+        while True:
+          if nueva_poblacion.isdigit():
+            nueva_poblacion = int(nueva_poblacion)
+            break
+          else:
+            print("La población ingresada no es válida. Por favor ingrese un número entero.")
+            nueva_poblacion = input("Por favor ingrese la nueva población del país: ")
+
+        nueva_superficie = input("Por favor ingrese la nueva superficie del país: ")
+        while True:
+          if nueva_superficie.isdigit() and int(nueva_superficie) > 0:
+            nueva_superficie = int(nueva_superficie)
+            break
+          else:
+            print("La superficie ingresada no es válida. Por favor ingrese un número entero.")
+            nueva_superficie = input("Por favor ingrese la nueva superficie del país: ")
+        paises.append({"nombre": nombre, "poblacion": nueva_poblacion, "superficie": nueva_superficie, "continente": continente})
+  
+  with open("dataset_paises_undata.csv", "w", newline="") as archivo:
+    escritor = csv.writer(archivo)
+    escritor.writerow(["nombre", "poblacion", "superficie", "continente"])
+    for pais in paises:
+      escritor.writerow([pais["nombre"], pais["poblacion"], pais["superficie"], pais["continente"]])
+  print(f"La población y superficie del país {pais} han sido actualizados.")
+
+
 print("\nTrabajo integrador de Programación I - Gestión de datos en Python.\n")
 while True:
   print("Por favor ingrese una opción para continuar: ")
-  opcion = input("1. Buscar un país por nombre. \n2. Filtrar países por continente. \n3. Filtrar países por rango de población. \n4. Filtrar países por rango de superficie(Km2). \n5. Ordenar países por nombre. \n6. Ordenar países por población. \n7. Ordenar países por superficie. \n8. Estadísticas. \n9. Agregar un país a la lista. \n10. Salir del menú.\n")
+  opcion = input("1. Buscar un país por nombre. \n2. Filtrar países por continente. \n3. Filtrar países por rango de población. \n4. Filtrar países por rango de superficie(Km2). \n5. Ordenar países por nombre. \n6. Ordenar países por población. \n7. Ordenar países por superficie. \n8. Estadísticas. \n9. Agregar un país a la lista. \n10. Actualizar la población y superficie de un país. \n11. Salir del menú.\n")
   match opcion:
     case "1":
       buscar_pais()
@@ -276,6 +337,8 @@ while True:
     case "9":
       agregar_pais()
     case "10":
+      actualizar_poblacion_y_superficie([])
+    case "11":
       print("Saliendo del menú...")
       exit()
     case _:
