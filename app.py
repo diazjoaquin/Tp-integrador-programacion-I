@@ -9,6 +9,13 @@ def normalizar_palabra(palabra):
 
 def buscar_pais():
   pais = input("Ingresar el nombre del país que desea buscar: ")
+  while True:
+    if pais.isspace() or pais == "":
+      print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
+      pais = input("Ingresar el nombre del país que desea buscar: ")
+    else:
+      break
+  
   termino_busqueda = normalizar_palabra(pais.strip().lower())
   paises_encontrados = []
   
@@ -32,6 +39,12 @@ def buscar_pais():
 def filtrar_x_continente():
   continente = input("Por favor ingrese el nombre del continente: ")
   continentes = ["America", "Asia", "Africa", "Europa", "Oceania", "Antartida"]
+  while True:
+    if continente.isspace() or continente == "":
+      print("El nombre del continente no puede estar vacío. Por favor ingrese un nombre válido.")
+      continente = input("Por favor ingrese el nombre del continente: ")
+    else:
+      break
   termino_busqueda = normalizar_palabra(continente.strip().lower())
   while True:
     if termino_busqueda in [c.lower() for c in continentes]:
@@ -158,11 +171,61 @@ def estadisticas(paises: list[dict]):
   for continente, paises_continente in paises_x_continente.items():
     print(f"{continente.capitalize()} tiene un total de {len(paises_continente)} paises.")
 
-while True:
-  print("\nTrabajo integrador de Programación I - Gestión de datos en Python.\n")
-  print("Por favor ingrese una opción para continuar: ")
-  opcion = input("1. Buscar un país por nombre. \n2. Filtrar países por continente. \n3. Filtrar países por rango de población. \n4. Filtrar países por rango de superficie(Km2). \n5. Ordenar países por nombre. \n6. Ordenar países por población. \n7. Ordenar países por superficie. \n8. Estadísticas. \n9. Salir del menú.\n")
+def agregar_pais():
+  nombre = input("Por favor ingrese el nombre del país que desea agregar a la lista: ")
+  while True:
+    if nombre.isspace() or nombre == "":
+      print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
+      nombre = input("Por favor ingrese el nombre del país que desea agregar a la lista: ")
+    else:
+      break
 
+  with open("dataset_paises_undata.csv", "r") as archivo:
+    lector = csv.reader(archivo)
+    next(lector, None)
+    for linea in lector:
+      if nombre.title() in linea[0].title():
+        print("El país ya existe en la lista. Por favor ingrese un nombre diferente.")
+        nombre = input("Por favor ingrese el nombre del país que desea agregar a la lista: ")
+        continue
+
+  poblacion = input("Por favor ingrese la población del país: ")
+  while True:
+    if poblacion.isdigit():
+      poblacion = int(poblacion)
+      break
+    else:
+      print("La población ingresada no es válida. Por favor ingrese un número entero.")
+      poblacion = input("Por favor ingrese la población del país: ")
+
+  superficie = input("Por favor ingrese la superficie del país: ")
+  while True:
+    if superficie.isdigit() and int(superficie) > 0:
+      superficie = int(superficie)
+      break
+    else:
+      print("La superficie ingresada no es válida. Por favor ingrese un número entero.")
+      superficie = input("Por favor ingrese la superficie del país: ")
+
+  continentes = ["America", "Asia", "Africa", "Europa", "Oceania", "Antartida"]
+  continente = input("Por favor ingrese el continente del país: ")
+  while True:
+    if continente.isspace() or continente == "" or continente.title() not in continentes:
+      print("El continente ingresado no es válido. Por favor ingrese un continente válido.")
+      continente = input("Por favor ingrese el continente del país: ")
+    else:
+      break
+
+  with open("dataset_paises_undata.csv", "a") as archivo:
+    escritor = csv.writer(archivo)
+    escritor.writerow([nombre.title(), poblacion, superficie, continente.title()])
+  print(f"El país {nombre} ha sido agregado a la lista.")
+  return
+
+print("\nTrabajo integrador de Programación I - Gestión de datos en Python.\n")
+while True:
+  print("Por favor ingrese una opción para continuar: ")
+  opcion = input("1. Buscar un país por nombre. \n2. Filtrar países por continente. \n3. Filtrar países por rango de población. \n4. Filtrar países por rango de superficie(Km2). \n5. Ordenar países por nombre. \n6. Ordenar países por población. \n7. Ordenar países por superficie. \n8. Estadísticas. \n9. Agregar un país a la lista. \n10. Salir del menú.\n")
   match opcion:
     case "1":
       buscar_pais()
@@ -211,7 +274,9 @@ while True:
     case "8":
       estadisticas([])
     case "9":
+      agregar_pais()
+    case "10":
       print("Saliendo del menú...")
-      break
+      exit()
     case _:
       print("\nOpción inválida. Por favor ingrese una opción válida.")
