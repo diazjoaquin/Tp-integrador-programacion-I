@@ -10,7 +10,7 @@ def normalizar_palabra(palabra):
 def buscar_pais():
   pais = input("Ingresar el nombre del país que desea buscar: ")
   while True:
-    if pais.isspace() or pais == "":
+    if len(pais.strip()) == 0:
       print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
       pais = input("Ingresar el nombre del país que desea buscar: ")
     else:
@@ -40,7 +40,7 @@ def filtrar_x_continente():
   continente = input("Por favor ingrese el nombre del continente: ")
   continentes = ["America", "Asia", "Africa", "Europa", "Oceania", "Antartida"]
   while True:
-    if continente.isspace() or continente == "":
+    if len(continente.strip()) == 0:
       print("El nombre del continente no puede estar vacío. Por favor ingrese un nombre válido.")
       continente = input("Por favor ingrese el nombre del continente: ")
     else:
@@ -174,7 +174,7 @@ def estadisticas(paises: list[dict]):
 def agregar_pais():
   nombre = input("Por favor ingrese el nombre del país que desea agregar a la lista: ")
   while True:
-    if nombre.isspace() or nombre == "":
+    if len(nombre.strip()) == 0:
       print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
       nombre = input("Por favor ingrese el nombre del país que desea agregar a la lista: ")
     else:
@@ -210,7 +210,7 @@ def agregar_pais():
   continentes = ["America", "Asia", "Africa", "Europa", "Oceania", "Antartida"]
   continente = input("Por favor ingrese el continente del país: ")
   while True:
-    if continente.isspace() or continente == "" or continente.title() not in continentes:
+    if len(continente.strip()) == 0 or continente.title() not in continentes:
       print("El continente ingresado no es válido. Por favor ingrese un continente válido.")
       continente = input("Por favor ingrese el continente del país: ")
     else:
@@ -223,30 +223,32 @@ def agregar_pais():
   return
 
 def actualizar_poblacion_y_superficie(paises: list[dict]):
-  pais = input("Ingresar el nombre del país que desea actualizar: ")
-  while True:
-    if pais.isspace() or pais == "":
-      print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
-      pais = input("Ingresar el nombre del país que desea buscar: ")
-    else:
-      break
-
-  termino_busqueda = normalizar_palabra(pais.strip().lower())
   pais_encontrado = False
 
-  #verificamos que el pais exista
-  with open("dataset_paises_undata.csv", "r") as archivo:
-    lector = csv.reader(archivo)
-    next(lector, None)
-    for linea in lector:
-      [nombre, poblacion, superficie, continente] = linea
-      if normalizar_palabra(nombre.strip().lower()) == termino_busqueda:
-        pais_encontrado = True
+  while not pais_encontrado:
+    pais = input("Ingresar el nombre del país que desea actualizar: ")
+
+    while True:
+      if len(pais.strip()) == 0:
+        print("El nombre del país no puede estar vacío. Por favor ingrese un nombre válido.")
+        pais = input("Ingresar el nombre del país que desea actualizar: ")
+      else:
         break
 
-  if pais_encontrado == False:
-    print("No se encontraron países que coincidan con la búsqueda")
-    return
+    termino_busqueda = normalizar_palabra(pais.strip().lower())
+
+    #verificamos que el pais exista
+    with open("dataset_paises_undata.csv", "r") as archivo:
+      lector = csv.reader(archivo)
+      next(lector, None)
+      for linea in lector:
+        [nombre, poblacion, superficie, continente] = linea
+        if normalizar_palabra(nombre.strip().lower()) == termino_busqueda:
+          pais_encontrado = True
+          break
+
+    if not pais_encontrado:
+      print("No se encontraron países que coincidan con la búsqueda. Intente nuevamente.")
   
   with open("dataset_paises_undata.csv", "r") as archivo:
     lector = csv.reader(archivo)
